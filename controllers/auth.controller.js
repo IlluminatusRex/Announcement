@@ -22,7 +22,9 @@ exports.register = async (req, res) => {
       const userWithLogin = await User.findOne({ login });
       if (userWithLogin) {
         fs.unlinkSync(`./public/uploads/${avatar.filename}`);
-        return res.status(409).send({ message: 'User with login already exists' });
+        return res
+          .status(409)
+          .send({ message: 'User with login already exists' });
       }
       const user = await User.create({
         login,
@@ -43,15 +45,20 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { login, password } = req.body;
-    if (login && typeof login === 'string' && password && typeof password === 'string') {
+    if (
+      login &&
+      typeof login === 'string' &&
+      password &&
+      typeof password === 'string'
+    ) {
       const user = await User.findOne({ login });
       if (!user) {
         res.status(409).send({ message: 'Login or password is incorrect' });
       } else {
         if (bcrypt.compareSync(password, user.password)) {
           req.session.login = user.login;
-          req.session.user = user.id;
-          res.status(200).send({ message: 'Login succesful' });
+
+          res.status(200).send({ message: 'success' });
         } else {
           res.status(409).send({ message: 'Login or password is incorrect' });
         }

@@ -16,7 +16,7 @@ exports.getById = async (req, res) => {
     if (!ad) res.status(404).json({ message: 'Not found...' });
     else res.json(ad);
   } catch (err) {
-    res.status(500).json({ messahe: err });
+    res.status(500).json({ message: err });
   }
 };
 
@@ -61,7 +61,7 @@ exports.update = async (req, res) => {
   try {
     const { title, text, date, price, location } = req.body;
     const image = req.file;
-    const fileType = image ? await getImageFileType(photo) : 'unknown';
+    const fileType = image ? await getImageFileType(image) : 'unknown';
     const ad = await Ad.findById(req.params.id);
     if (ad) {
       await Ad.updateOne(
@@ -76,8 +76,11 @@ exports.update = async (req, res) => {
           },
         }
       );
-      if (image && ['image/png', 'image/jpeg', 'image/gif'].includes(fileType)) {
-        image: image.filename;
+      if (
+        image &&
+        ['image/png', 'image/jpeg', 'image/gif'].includes(fileType)
+      ) {
+        ad.image = image.filename;
       }
       res.json({ message: 'Updated' });
     } else {

@@ -9,7 +9,7 @@ const app = express();
 const NODE_ENV = process.env.NODE_ENV;
 let dbUri = '';
 if (NODE_ENV === 'production')
-  dbUri = `mongodb+srv://IlluminatusRex:'+ ${process.env.DB_PASS} + '@cluster0.v92vn9f.mongodb.net/?retryWrites=true&w=majority`;
+  dbUri = dbUri = `mongodb+srv://IlluminatusRex:${process.env.DB_PASS}@cluster0.v92vn9f.mongodb.net/?retryWrites=true&w=majority`;
 else if (NODE_ENV === 'test') dbUri = 'mongodb://localhost:27017/fullstack-backend';
 else dbUri = 'mongodb://localhost:27017/fullstack-backend';
 
@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   session({
     secret: `${process.env.SESSION_SECRET}`,
-    store: MongoStore.create(mongoose.connection),
+    store: MongoStore.create(db),
     resave: false,
     saveUninitialized: false,
     cookie: {
