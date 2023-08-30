@@ -42,6 +42,7 @@ const AddEdit = () => {
     fd.append('price', price);
     fd.append('location', location);
     fd.append('image', image);
+    fd.append('id', adById._id);
 
     const options = {
       method: 'PUT',
@@ -49,9 +50,9 @@ const AddEdit = () => {
     };
 
     setStatus('loading');
-    fetch(`${API_URL}/api/ads}`, options)
+    fetch(`${API_URL}/api/ads/${adById._id}`, options)
       .then((res) => {
-        if (res.status === 201) {
+        if (res.status === 200) {
           setStatus('success');
           dispatch(editAdRequest(fd));
           setTimeout(() => {

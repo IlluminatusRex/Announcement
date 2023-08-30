@@ -4,8 +4,9 @@ const fs = require('fs');
 
 exports.getAll = async (req, res) => {
   try {
-    res.json(await Ad.find().populate('user'));
+    res.json(await Ad.find().populate('_id'));
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err });
   }
 };
@@ -21,10 +22,11 @@ exports.getById = async (req, res) => {
 };
 
 exports.add = async (req, res) => {
-  try {
-    const { title, text, date, price, location } = req.body;
-    const image = req.file;
+  const { title, text, date, price, location } = req.body;
+  const image = req.file;
 
+  try {
+    
     const fileType = image ? await getImageFileType(image) : 'unknown';
 
     if (
@@ -43,7 +45,7 @@ exports.add = async (req, res) => {
         price: price,
         location: location,
         image: image.filename,
-        user: req.session.user,
+        user: req.session.login,
       });
       await newAd.save();
       res.json({ message: 'added' });
@@ -58,11 +60,13 @@ exports.add = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  try {
-    const { title, text, date, price, location } = req.body;
-    const image = req.file;
+  const { title, text, date, price, location } = req.body;
+  const image = req.file;
+  
+  try {  
     const fileType = image ? await getImageFileType(image) : 'unknown';
     const ad = await Ad.findById(req.params.id);
+    
     if (ad) {
       await Ad.updateOne(
         { _id: req.params.id },
@@ -88,6 +92,7 @@ exports.update = async (req, res) => {
       res.status(400).send({ message: 'Bad request' });
     }
   } catch (err) {
+    console.log(req.params);
     res.status(500).send({ message: err.message });
   }
 };
