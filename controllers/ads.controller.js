@@ -26,7 +26,6 @@ exports.add = async (req, res) => {
   const image = req.file;
 
   try {
-    
     const fileType = image ? await getImageFileType(image) : 'unknown';
 
     if (
@@ -60,7 +59,7 @@ exports.add = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  const { title, text, date, price, location } = req.body;
+  const { title, text, date, price, location, _id} = req.body;
   const image = req.file;
   
   try {  
@@ -86,13 +85,15 @@ exports.update = async (req, res) => {
       ) {
         ad.image = image.filename;
       }
-      res.json({ message: 'Updated' });
+      await ad.save();
+      res.json(ad);
+      res.status(200).send({ message: 'Updated' });
     } else {
       fs.unlinkSync(`./public/uploads/${image.filename}`);
       res.status(400).send({ message: 'Bad request' });
     }
   } catch (err) {
-    console.log(req.params);
+    console.log(err);
     res.status(500).send({ message: err.message });
   }
 };

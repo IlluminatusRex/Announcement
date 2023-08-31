@@ -50,7 +50,7 @@ export const addAdRequest = (ad) => {
     try {
       let res = await axios.post(`${API_URL}/api/ads`, ad);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      dispatch(addAd(res));
+      dispatch(addAd(res.data));
       dispatch(endRequest());
     } catch (error) {
       dispatch(errorRequest(error.message));
@@ -64,7 +64,7 @@ export const editAdRequest = (ad) => {
     try {
       let res = await axios.put(`${API_URL}/api/ads/${ad._id}`, ad);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      dispatch(editAd(res));
+      dispatch(editAd(res.data));
       dispatch(endRequest());
     } catch (error) {
       dispatch(errorRequest(error.message));

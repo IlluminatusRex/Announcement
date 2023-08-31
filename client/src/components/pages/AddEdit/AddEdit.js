@@ -54,7 +54,7 @@ const AddEdit = () => {
       .then((res) => {
         if (res.status === 200) {
           setStatus('success');
-          dispatch(editAdRequest(fd));
+          dispatch(editAdRequest(fd, adById._id));
           setTimeout(() => {
             return navigate('/');
           }, 2000);
