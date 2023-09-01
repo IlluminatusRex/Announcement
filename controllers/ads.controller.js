@@ -87,7 +87,6 @@ exports.update = async (req, res) => {
       }
       await ad.save();
       res.json(ad);
-      res.status(200).send({ message: 'Updated' });
     } else {
       fs.unlinkSync(`./public/uploads/${image.filename}`);
       res.status(400).send({ message: 'Bad request' });
