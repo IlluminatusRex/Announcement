@@ -9,6 +9,7 @@ import { getUser } from '../../../redux/usersRedux';
 import { useDispatch, useSelector } from 'react-redux';
 import { editAdRequest, getAdById } from '../../../redux/adsRedux';
 import { API_URL } from '../../../config';
+import { editAd, deleteAd } from '../../../redux/adsRedux';
 
 const AddEdit = () => {
   const { id } = useParams();
@@ -52,9 +53,11 @@ const AddEdit = () => {
     setStatus('loading');
     fetch(`${API_URL}/api/ads/${adById._id}`, options)
       .then((res) => {
+        console.log("RES STATUS",res.status);
         if (res.status === 200) {
           setStatus('success');
-          dispatch(editAdRequest(fd, adById._id));
+          res.json().then((data) => {
+          dispatch(editAd(data))});
           setTimeout(() => {
             return navigate('/');
           }, 2000);
@@ -67,11 +70,38 @@ const AddEdit = () => {
         }
       })
       .catch((err) => {
+        console.log("ERR: ",err);
         setStatus('serverError');
       });
   };
 
-  const handleDelete = () => {};
+  const handleDelete = (e) => {
+    e.preventDefault();
+
+    const options = {
+      method: 'DELETE',
+    };
+
+    setStatus('loading');
+    fetch(`${API_URL}/api/ads/${adById._id}`, options)
+      .then((res) => {
+        console.log("RES STATUS",res.status);
+        if (res.status === 200) {
+          setStatus('success');
+          dispatch(deleteAd(adById._id));
+          navigate('/');
+        } else if (res.status === 400) {
+          setStatus('clientError');
+        } else if (res.status === 409) {
+          setStatus('loginError');
+        } else {
+          setStatus('serverError');
+        }
+      })
+      .catch((err) => {
+        setStatus('serverError');
+      });
+  };
 
   return (
     <Form className="col-12 col-sm-3 mx-auto" onSubmit={handleSubmit}>

@@ -17,6 +17,7 @@ const ERROR_REQUEST = createActionName('ERROR_REQUEST');
 const LOAD_ADS = createActionName('LOAD_ADS');
 const ADD_AD = createActionName('ADD_AD');
 const EDIT_AD = createActionName('EDIT_AD');
+const DELETE_AD = createActionName('DELETE_AD');
 
 // action creators
 export const startRequest = () => ({ type: START_REQUEST });
@@ -29,6 +30,7 @@ export const editAd = (payload) => ({
   type: EDIT_AD,
   payload,
 });
+export const deleteAd = (payload) => ({ payload, type: DELETE_AD });
 
 // thunks
 export const loadAdsRequest = () => {
@@ -58,20 +60,6 @@ export const addAdRequest = (ad) => {
   };
 };
 
-export const editAdRequest = (ad) => {
-  return async (dispatch) => {
-    dispatch(startRequest());
-    try {
-      let res = await axios.put(`${API_URL}/api/ads/${ad._id}`, ad);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      dispatch(editAd(res.data));
-      dispatch(endRequest());
-    } catch (error) {
-      dispatch(errorRequest(error.message));
-    }
-  };
-};
-
 const initialState = {
   ads: [],
   request: {
@@ -87,9 +75,9 @@ const adsReducer = (statePart = initialState, action = {}) => {
     case ADD_AD:
       return { ...statePart, ads: [...statePart.ads, { ...action.payload }] };
     case EDIT_AD:
-      return statePart.ads.map((ad) =>
-        ad._id === action.payload.id ? { ...ad, ...action.payload } : ad
-      );
+      return {...statePart, ads:statePart.ads.map((ad) =>
+        ad._id === action.payload._id ? { ...ad, ...action.payload } : ad
+      )};
     case LOAD_ADS:
       return { ...statePart, ads: [...action.payload] };
     case START_REQUEST:
@@ -107,7 +95,11 @@ const adsReducer = (statePart = initialState, action = {}) => {
         ...statePart,
         request: { pending: false, error: action.error, success: false },
       };
-
+    case DELETE_AD:
+      return {
+      ...statePart,
+        ads: statePart.ads.filter((ad) => ad._id!== action.payload),
+      };
     default:
       return statePart;
   }
